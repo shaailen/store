@@ -28,7 +28,6 @@ jobs:
         run: ./gradlew build
 
       - name: Build & push Docker image
-        if: needs.pr-check.outputs.number != null
         uses: mr-smithers-excellent/docker-build-push@v6
         with:
           image: shaailen/securit-ease
