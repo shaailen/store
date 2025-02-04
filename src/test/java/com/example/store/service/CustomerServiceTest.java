@@ -38,7 +38,6 @@ class CustomerServiceTest {
 
     @BeforeEach
     public void setUp() {
-        // Sample customer data
         customer = new Customer();
         customer.setId(1L);
         customer.setName("John Doe");
@@ -53,14 +52,11 @@ class CustomerServiceTest {
 
     @Test
     public void testGetAllCustomers() {
-        // Arrange
         when(customerRepository.findAll()).thenReturn(customerList);
         when(customerMapper.customersToCustomerResponseDTOs(customerList)).thenReturn(customerResponseDTOList);
 
-        // Act
         List<CustomerResponseDTO> result = customerService.getAllCustomers();
 
-        // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals("John Doe", result.get(0).getName());
@@ -68,15 +64,12 @@ class CustomerServiceTest {
 
     @Test
     public void testGetAllByPartialName() {
-        // Arrange
         String name = "John";
         when(customerRepository.findByNameContainingIgnoreCase(name)).thenReturn(customerList);
         when(customerMapper.customersToCustomerResponseDTOs(customerList)).thenReturn(customerResponseDTOList);
 
-        // Act
         List<CustomerResponseDTO> result = customerService.getAllByPartialName(name);
 
-        // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals("John Doe", result.get(0).getName());
@@ -84,7 +77,6 @@ class CustomerServiceTest {
 
     @Test
     public void testCreateCustomer() {
-        // Arrange
         CustomerCreateRequestDTO customerCreateRequestDTO = new CustomerCreateRequestDTO();
         customerCreateRequestDTO.setName("Jane Doe");
 
@@ -93,38 +85,30 @@ class CustomerServiceTest {
         when(customerRepository.save(customer)).thenReturn(customer);
         when(customerMapper.customerToCustomerResponseDTO(customer)).thenReturn(customerResponseDTO);
 
-        // Act
         CustomerResponseDTO result = customerService.createCustomer(customerCreateRequestDTO);
 
-        // Assert
         assertNotNull(result);
         assertEquals("John Doe", result.getName());
     }
 
     @Test
     public void testGetAllCustomers_empty() {
-        // Arrange
         when(customerRepository.findAll()).thenReturn(Arrays.asList());
         when(customerMapper.customersToCustomerResponseDTOs(Arrays.asList())).thenReturn(Arrays.asList());
 
-        // Act
         List<CustomerResponseDTO> result = customerService.getAllCustomers();
 
-        // Assert
         assertTrue(result.isEmpty());
     }
 
     @Test
     public void testGetAllByPartialName_empty() {
-        // Arrange
         String name = "Unknown";
         when(customerRepository.findByNameContainingIgnoreCase(name)).thenReturn(Arrays.asList());
         when(customerMapper.customersToCustomerResponseDTOs(Arrays.asList())).thenReturn(Arrays.asList());
 
-        // Act
         List<CustomerResponseDTO> result = customerService.getAllByPartialName(name);
 
-        // Assert
         assertTrue(result.isEmpty());
     }
 }
