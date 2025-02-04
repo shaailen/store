@@ -1,65 +1,93 @@
 package com.example.store.controller;
 
-import com.example.store.entity.Customer;
-import com.example.store.mapper.CustomerMapper;
-import com.example.store.repository.CustomerRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.store.dto.customer.CustomerCreateRequestDTO;
+import com.example.store.dto.customer.CustomerResponseDTO;
+import com.example.store.service.CustomerService;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Collections;
 import java.util.List;
 
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@ExtendWith(SpringExtension.class)
 @WebMvcTest(CustomerController.class)
-@ComponentScan(basePackageClasses = CustomerMapper.class)
 class CustomerControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @MockitoBean
-    private CustomerRepository customerRepository;
-
-    private Customer customer;
-
-    @BeforeEach
-    void setUp() {
-        customer = new Customer();
-        customer.setName("John Doe");
-        customer.setId(1L);
-    }
+    private CustomerService customerService;
 
     @Test
-    void testCreateCustomer() throws Exception {
-        when(customerRepository.save(customer)).thenReturn(customer);
-
-        mockMvc.perform(post("/customer")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(customer)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name").value("John Doe"));
-    }
-
-    @Test
-    void testGetAllCustomers() throws Exception {
-        when(customerRepository.findAll()).thenReturn(List.of(customer));
+    void getAllCustomers_ShouldReturnListOfCustomers() throws Exception {
+        List<CustomerResponseDTO> customers = List.of(new CustomerResponseDTO());
+        when(customerService.getAllCustomers()).thenReturn(customers);
 
         mockMvc.perform(get("/customer"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$..name").value("John Doe"));
-        ;
+                .andExpect(jsonPath("$").isArray());
+    }
+
+    @Test
+    void getAllCustomers_ShouldReturnNoContent() throws Exception {
+        when(customerService.getAllCustomers()).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/customer")).andExpect(status().isNoContent());
+    }
+
+    @Test
+    void getCustomerByPartialName_ShouldReturnCustomers() throws Exception {
+        String name = "John";
+        List<CustomerResponseDTO> customers = List.of(new CustomerResponseDTO());
+        when(customerService.getAllByPartialName(name)).thenReturn(customers);
+
+        mockMvc.perform(get("/customer/name").param("name", name)).andExpect(status().isOk());
+    }
+
+    @Test
+    void getCustomerByPartialName_ShouldReturnNoContent() throws Exception {
+        String name = "John";
+        when(customerService.getAllByPartialName(name)).thenReturn(null);
+
+        mockMvc.perform(get("/customer/name").param("name", name)).andExpect(status().isNoContent());
+    }
+
+    @Test
+    void createCustomer_ShouldReturnCreated() throws Exception {
+        CustomerCreateRequestDTO requestDTO = new CustomerCreateRequestDTO();
+        CustomerResponseDTO responseDTO = new CustomerResponseDTO();
+        when(customerService.createCustomer(any(CustomerCreateRequestDTO.class)))
+                .thenReturn(responseDTO);
+
+        mockMvc.perform(post("/customer")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}"))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    void createCustomer_ShouldReturnInternalServerError() throws Exception {
+        when(customerService.createCustomer(any(CustomerCreateRequestDTO.class)))
+                .thenReturn(null);
+
+        mockMvc.perform(post("/customer")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}"))
+                .andExpect(status().isInternalServerError());
     }
 }

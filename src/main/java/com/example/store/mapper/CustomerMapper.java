@@ -1,6 +1,7 @@
 package com.example.store.mapper;
 
-import com.example.store.dto.CustomerDTO;
+import com.example.store.dto.customer.CustomerCreateRequestDTO;
+import com.example.store.dto.customer.CustomerResponseDTO;
 import com.example.store.entity.Customer;
 
 import org.mapstruct.Mapper;
@@ -9,7 +10,9 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface CustomerMapper {
-    CustomerDTO customerToCustomerDTO(Customer customer);
+    CustomerResponseDTO customerToCustomerResponseDTO(Customer customer);
 
-    List<CustomerDTO> customersToCustomerDTOs(List<Customer> customer);
+    List<CustomerResponseDTO> customersToCustomerResponseDTOs(List<Customer> customer);
+
+    Customer createCustomerRequestDTOToCustomer(CustomerCreateRequestDTO customerCreateRequestDTO);
 }

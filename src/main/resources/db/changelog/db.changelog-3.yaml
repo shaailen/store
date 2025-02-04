@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - changeSet:
+      id: 3-additions
+      author: developer@securitease.com
+      changes:
+        - sqlFile:
+            path: db/changelog/additions.sql

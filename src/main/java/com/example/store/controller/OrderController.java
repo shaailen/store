@@ -1,33 +1,43 @@
 package com.example.store.controller;
 
-import com.example.store.dto.OrderDTO;
-import com.example.store.entity.Order;
-import com.example.store.mapper.OrderMapper;
-import com.example.store.repository.OrderRepository;
+import com.example.store.dto.order.OrderCreateRequestDTO;
+import com.example.store.dto.order.OrderResponseDTO;
+import com.example.store.service.OrderService;
 
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/order")
 @RequiredArgsConstructor
 public class OrderController {
 
-    private final OrderRepository orderRepository;
-    private final OrderMapper orderMapper;
+    private final OrderService orderService;
 
     @GetMapping
-    public List<OrderDTO> getAllOrders() {
-        return orderMapper.ordersToOrderDTOs(orderRepository.findAll());
+    public ResponseEntity<List<OrderResponseDTO>> getAllOrders() {
+        List<OrderResponseDTO> orderResponseDTOS = orderService.getAllOrders();
+        return orderResponseDTOS.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(orderResponseDTOS);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<OrderResponseDTO> getOrderById(@PathVariable Long id) {
+        Optional<OrderResponseDTO> orderDTO = orderService.getOrderById(id);
+        return orderDTO.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.noContent().build());
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public OrderDTO createOrder(@RequestBody Order order) {
-        return orderMapper.orderToOrderDTO(orderRepository.save(order));
+    public ResponseEntity<OrderResponseDTO> createOrder(@RequestBody OrderCreateRequestDTO orderCreateRequestDTO) {
+        OrderResponseDTO orderResponseDTO = orderService.createOrder(orderCreateRequestDTO);
+        return orderResponseDTO == null
+                ? ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
+                : ResponseEntity.status(HttpStatus.CREATED).body(orderResponseDTO);
     }
 }
