@@ -35,7 +35,7 @@ class OrderControllerTest {
     private OrderService orderService;
 
     @Test
-    void getAllOrders_ShouldReturnListOfOrders() throws Exception {
+    void getAllOrders_ReturnListOfOrders() throws Exception {
         List<OrderResponseDTO> orders = List.of(new OrderResponseDTO());
         when(orderService.getAllOrders()).thenReturn(orders);
 
@@ -45,14 +45,14 @@ class OrderControllerTest {
     }
 
     @Test
-    void getAllOrders_ShouldReturnNoContent() throws Exception {
+    void getAllOrders_ReturnNoContent() throws Exception {
         when(orderService.getAllOrders()).thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/order")).andExpect(status().isNoContent());
     }
 
     @Test
-    void getOrderById_ShouldReturnOrder() throws Exception {
+    void getOrderById_ReturnOrder() throws Exception {
         Long orderId = 1L;
         OrderResponseDTO order = new OrderResponseDTO();
         when(orderService.getOrderById(orderId)).thenReturn(Optional.of(order));
@@ -61,7 +61,7 @@ class OrderControllerTest {
     }
 
     @Test
-    void getOrderById_ShouldReturnNoContentFound() throws Exception {
+    void getOrderById_ReturnNoContentFound() throws Exception {
         Long orderId = 1L;
         when(orderService.getOrderById(any())).thenReturn(Optional.empty());
 
@@ -69,7 +69,7 @@ class OrderControllerTest {
     }
 
     @Test
-    void createOrder_ShouldReturnCreated() throws Exception {
+    void createOrder_ReturnCreated() throws Exception {
         OrderResponseDTO responseDTO = new OrderResponseDTO();
         when(orderService.createOrder(any(OrderCreateRequestDTO.class))).thenReturn(responseDTO);
 
@@ -78,7 +78,7 @@ class OrderControllerTest {
     }
 
     @Test
-    void createOrder_ShouldReturnInternalServerError() throws Exception {
+    void createOrder_ReturnInternalServerError() throws Exception {
         when(orderService.createOrder(any(OrderCreateRequestDTO.class))).thenReturn(null);
 
         mockMvc.perform(post("/order").contentType(MediaType.APPLICATION_JSON).content("{}"))

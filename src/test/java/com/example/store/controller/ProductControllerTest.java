@@ -33,7 +33,7 @@ class ProductControllerTest {
     private ProductService productService;
 
     @Test
-    void getAllProducts_ShouldReturnOk_WhenProductsExist() throws Exception {
+    void getAllProducts_ReturnOk_WhenProductsExist() throws Exception {
         List<ProductResponseDto> products = List.of(new ProductResponseDto(1L, "Product", List.of(1L)));
         when(productService.getAllProducts()).thenReturn(products);
 
@@ -47,14 +47,14 @@ class ProductControllerTest {
     }
 
     @Test
-    void getAllProducts_ShouldReturnNoContent_WhenNoProductsExist() throws Exception {
+    void getAllProducts_ReturnNoContent_WhenNoProductsExist() throws Exception {
         when(productService.getAllProducts()).thenReturn(List.of());
 
         mockMvc.perform(get("/product")).andExpect(status().isNoContent());
     }
 
     @Test
-    void getProductById_ShouldReturnOk_WhenProductExists() throws Exception {
+    void getProductById_ReturnOk_WhenProductExists() throws Exception {
         ProductResponseDto product = new ProductResponseDto(1L, "Found Product", List.of(1L));
         when(productService.getProductById(1L)).thenReturn(Optional.of(product));
 
@@ -67,14 +67,14 @@ class ProductControllerTest {
     }
 
     @Test
-    void getProductById_ShouldReturnNotFound_WhenProductDoesNotExist() throws Exception {
+    void getProductById_ReturnNotFound_WhenProductDoesNotExist() throws Exception {
         when(productService.getProductById(1L)).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/product/{id}", 1L)).andExpect(status().isNoContent());
     }
 
     @Test
-    void createProduct_ShouldReturnCreated_WhenProductIsSuccessfullyCreated() throws Exception {
+    void createProduct_ReturnCreated_WhenProductIsSuccessfullyCreated() throws Exception {
         ProductResponseDto responseDTO = new ProductResponseDto(1L, "New Product", List.of(1L));
         when(productService.createProduct(any(ProductCreateRequestDTO.class))).thenReturn(responseDTO);
 
@@ -89,12 +89,12 @@ class ProductControllerTest {
     }
 
     @Test
-    void createProduct_ShouldReturnInternalServerError_WhenProductCreationFails() throws Exception {
+    void createProduct_ReturnInternalServerError_WhenProductCreationFails() throws Exception {
         when(productService.createProduct(any(ProductCreateRequestDTO.class))).thenReturn(null);
 
         mockMvc.perform(post("/product")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"New Product\", \"price\":50.0}"))
+                        .content("{\"name\":\"New Product\", \"price\":100.0}"))
                 .andExpect(status().isInternalServerError());
     }
 }

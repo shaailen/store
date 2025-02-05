@@ -40,11 +40,11 @@ class CustomerServiceTest {
     public void setUp() {
         customer = new Customer();
         customer.setId(1L);
-        customer.setName("John Doe");
+        customer.setName("Shailen Moodley");
 
         customerResponseDTO = new CustomerResponseDTO();
         customerResponseDTO.setId(1L);
-        customerResponseDTO.setName("John Doe");
+        customerResponseDTO.setName("Shailen Moodley");
 
         customerList = Arrays.asList(customer);
         customerResponseDTOList = Arrays.asList(customerResponseDTO);
@@ -59,12 +59,12 @@ class CustomerServiceTest {
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals("John Doe", result.get(0).getName());
+        assertEquals("Shailen Moodley", result.get(0).getName());
     }
 
     @Test
     public void testGetAllByPartialName() {
-        String name = "John";
+        String name = "Shai";
         when(customerRepository.findByNameContainingIgnoreCase(name)).thenReturn(customerList);
         when(customerMapper.customersToCustomerResponseDTOs(customerList)).thenReturn(customerResponseDTOList);
 
@@ -72,7 +72,7 @@ class CustomerServiceTest {
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals("John Doe", result.get(0).getName());
+        assertEquals("Shailen Moodley", result.get(0).getName());
     }
 
     @Test
@@ -88,7 +88,7 @@ class CustomerServiceTest {
         CustomerResponseDTO result = customerService.createCustomer(customerCreateRequestDTO);
 
         assertNotNull(result);
-        assertEquals("John Doe", result.getName());
+        assertEquals("Shailen Moodley", result.getName());
     }
 
     @Test

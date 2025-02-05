@@ -34,7 +34,7 @@ class CustomerControllerTests {
     private CustomerService customerService;
 
     @Test
-    void getAllCustomers_ShouldReturnListOfCustomers() throws Exception {
+    void getAllCustomers_ReturnListOfCustomers() throws Exception {
         List<CustomerResponseDTO> customers = List.of(new CustomerResponseDTO());
         when(customerService.getAllCustomers()).thenReturn(customers);
 
@@ -44,15 +44,15 @@ class CustomerControllerTests {
     }
 
     @Test
-    void getAllCustomers_ShouldReturnNoContent() throws Exception {
+    void getAllCustomers_ReturnNoContent() throws Exception {
         when(customerService.getAllCustomers()).thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/customer")).andExpect(status().isNoContent());
     }
 
     @Test
-    void getCustomerByPartialName_ShouldReturnCustomers() throws Exception {
-        String name = "John";
+    void getCustomerByPartialName_ReturnCustomers() throws Exception {
+        String name = "Shailen";
         List<CustomerResponseDTO> customers = List.of(new CustomerResponseDTO());
         when(customerService.getAllByPartialName(name)).thenReturn(customers);
 
@@ -60,16 +60,15 @@ class CustomerControllerTests {
     }
 
     @Test
-    void getCustomerByPartialName_ShouldReturnNoContent() throws Exception {
-        String name = "John";
+    void getCustomerByPartialName_ReturnNoContent() throws Exception {
+        String name = "Shailen";
         when(customerService.getAllByPartialName(name)).thenReturn(null);
 
         mockMvc.perform(get("/customer/name").param("name", name)).andExpect(status().isNoContent());
     }
 
     @Test
-    void createCustomer_ShouldReturnCreated() throws Exception {
-        CustomerCreateRequestDTO requestDTO = new CustomerCreateRequestDTO();
+    void createCustomer_ReturnCreated() throws Exception {
         CustomerResponseDTO responseDTO = new CustomerResponseDTO();
         when(customerService.createCustomer(any(CustomerCreateRequestDTO.class)))
                 .thenReturn(responseDTO);
@@ -81,7 +80,7 @@ class CustomerControllerTests {
     }
 
     @Test
-    void createCustomer_ShouldReturnInternalServerError() throws Exception {
+    void createCustomer_ReturnInternalServerError() throws Exception {
         when(customerService.createCustomer(any(CustomerCreateRequestDTO.class)))
                 .thenReturn(null);
 
